@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Really Simple CSV Importer
-Plugin URI: http://wordpress.org/plugins/really-simple-csv-importer/
-Description: Import posts, categories, tags, custom fields from simple csv file.
-Author: Takuro Hishikawa
-Author URI: https://en.digitalcube.jp/
+Plugin Name: Really Simple CSV Importer（日本語・カスタムフィールド対応版）
+Plugin URI: 
+Description: Really Simple CSV Importerをベースに日本語・カスタムフィールドのインポートに対応したカスタム版です。
+Author: Kuroro
+Author URI: 
 Text Domain: really-simple-csv-importer
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-Version: 1.3
+Version: 1.0
 */
 
 if ( !defined('WP_LOAD_IMPORTERS') )
@@ -505,3 +505,40 @@ function really_simple_csv_importer_enqueue($hook) {
 add_action( 'admin_enqueue_scripts', 'really_simple_csv_importer_enqueue' );
 
 } // class_exists( 'WP_Importer' )
+
+
+//Register the metadata for the "Advanced Custom Field."
+function cs_really_simple_csv_importer_save_meta($meta){
+	global $wpdb;
+
+	$acf_pre = '';
+	$meta_res = [];
+	foreach ($meta as $key => $value) {
+		 if($acf_pre){
+			 if (strpos($key, $acf_pre) === false) {
+				 $meta_res[$key] = $value;
+				 continue;
+			 }
+			 $acf_key = preg_replace('/^acf_(.*)/', '$1', $key);
+			 $meta_res[$acf_key] = $value;
+		 }else{
+			 $acf_key = $key;
+			 $meta_res[$acf_key] = $value;
+		 }
+
+		$key_str = $acf_key;
+		preg_match('/^(.*)_[0-9]{1,}_(.*)/', $acf_key, $key_match);
+		if (isset($key_match[2])) {
+			$key_str = $key_match[2];
+		}
+
+		$sql = "SELECT post_name FROM {$wpdb->posts} WHERE post_type = 'acf-field' AND post_excerpt = '%s' LIMIT 1";
+		$prepared = $wpdb->prepare($sql, esc_sql($key_str));
+		$field_key = $wpdb->get_col($prepared);
+		 if( isset($field_key[0]) ){
+			 $meta_res["_" . $acf_key] = $field_key[0];
+		 }
+	 }
+	return $meta_res;
+}
+add_filter('really_simple_csv_importer_save_meta', 'cs_really_simple_csv_importer_save_meta', 10, 1);
