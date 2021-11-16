@@ -1,3 +1,24 @@
+=== Really Simple CSV Importer JP & ACF ===
+Contributors: kuroro
+Tags: importer, csv, acf, cfs, scf
+Requires at least: 3.6
+Tested up to: 5.8.2
+Stable tag: 1.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+
+This plugin is an improvement of "Really Simple CSV Importer" created by "hissy".
+This plugin has been modified to import Japanese correctly, and supports the Pro version of "Advanced Custom Fields".
+
+== Changelog ==
+= 1.0 =
+Japanese language support and support for Advanced Custom Fields Pro.
+
+
+Since the copyright of the program code of "Really Simple CSV Importer" as of version 1.3 belongs to "hissy", the description of the readme before modification is left as it is below.
+
+
 === Really Simple CSV Importer ===
 Contributors: hissy
 Tags: importer, csv, acf, cfs, scf
